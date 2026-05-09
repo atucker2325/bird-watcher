@@ -1,190 +1,278 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Raven's Eye - Bird Watcher Log</title>
-    <link rel="stylesheet" href="css/style.css">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Raven's Eye — A personal bird-watching log</title>
+<meta name="description" content="A sleek, gothic-inspired bird-watching tracker. Log sightings, behavior, weather, and habitat in a sophisticated digital notebook." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" />
+<style>
+:root {
+  --radius: 0.5rem;
+  --background: oklch(0.16 0.012 285);
+  --foreground: oklch(0.92 0.012 80);
+  --card: oklch(0.20 0.014 285);
+  --muted-foreground: oklch(0.62 0.018 80);
+  --primary: oklch(0.72 0.115 75);
+  --primary-foreground: oklch(0.16 0.012 285);
+  --primary-glow: oklch(0.82 0.135 82);
+  --primary-deep: oklch(0.55 0.105 60);
+  --border: oklch(0.30 0.018 285);
+  --input: oklch(0.22 0.016 285);
+  --gradient-bronze: linear-gradient(135deg, var(--primary-deep) 0%, var(--primary) 50%, var(--primary-glow) 100%);
+  --gradient-night: radial-gradient(ellipse at top, oklch(0.22 0.030 295) 0%, oklch(0.13 0.010 285) 70%);
+  --gradient-hairline: linear-gradient(90deg, transparent, oklch(0.72 0.115 75 / 0.55), transparent);
+  --shadow-elegant: 0 20px 60px -25px oklch(0 0 0 / 0.7), 0 1px 0 0 oklch(1 0 0 / 0.04) inset;
+  --shadow-gold: 0 8px 24px -8px oklch(0.72 0.115 75 / 0.45);
+  --font-display: "Cormorant Garamond", ui-serif, Georgia, serif;
+  --font-body: "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+* { box-sizing: border-box; border-color: var(--border); }
+html, body { margin: 0; padding: 0; }
+body {
+  background: var(--gradient-night);
+  background-attachment: fixed;
+  color: var(--foreground);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+h1, h2, h3 { font-family: var(--font-display); letter-spacing: 0.01em; margin: 0; font-weight: 600; }
+main { max-width: 42rem; margin: 0 auto; padding: 2.5rem 1.25rem; }
+@media (min-width: 640px) { main { padding: 4rem 1.25rem; } }
+
+.header { text-align: center; }
+.raven-mark {
+  width: 72px; height: 72px; margin: 0 auto;
+  filter: drop-shadow(0 4px 18px oklch(0.72 0.115 75 / 0.35));
+}
+.title { margin-top: 1rem; font-size: 2.5rem; }
+@media (min-width: 640px) { .title { font-size: 3rem; } }
+.tagline { margin-top: 0.5rem; font-size: 0.875rem; font-style: italic; color: var(--muted-foreground); }
+.divider-row { display: flex; align-items: center; justify-content: center; gap: 0.75rem; margin-top: 1.5rem; }
+.ornament { height: 1px; background: var(--gradient-hairline); border: 0; width: 4rem; }
+.ornament.full { width: 100%; }
+.star { color: var(--primary); font-size: 0.75rem; letter-spacing: 0.4em; }
+
+.card {
+  margin-top: 2.5rem;
+  padding: 1.5rem;
+  background: linear-gradient(180deg, oklch(0.21 0.016 285) 0%, oklch(0.18 0.014 285) 100%);
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) + 6px);
+  box-shadow: var(--shadow-elegant);
+  position: relative;
+}
+@media (min-width: 640px) { .card { padding: 2.25rem; } }
+.card::before, .card::after {
+  content: ""; position: absolute; width: 14px; height: 14px;
+  border: 1px solid var(--primary); opacity: 0.55;
+}
+.card::before { top: -1px; left: -1px; border-right: 0; border-bottom: 0; }
+.card::after { bottom: -1px; right: -1px; border-left: 0; border-top: 0; }
+
+.card-head { display: flex; align-items: center; gap: 0.75rem; }
+.card-head svg { width: 28px; height: 28px; }
+.card-title { font-size: 1.5rem; }
+.card-sub { margin: 0.25rem 0 0; font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted-foreground); }
+
+form { margin-top: 1.75rem; display: flex; flex-direction: column; gap: 1.5rem; }
+.field-label {
+  display: block; font-size: 0.7rem; font-weight: 500;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--muted-foreground); margin-bottom: 0.5rem;
+}
+.field-label .opt { text-transform: none; letter-spacing: normal; opacity: 0.7; }
+.field-input {
+  width: 100%; background-color: var(--input); color: var(--foreground);
+  border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 0.7rem 0.9rem; font-size: 0.95rem; font-family: var(--font-body);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+.field-input::placeholder { color: oklch(0.5 0.02 80 / 0.7); }
+.field-input:hover:not(:disabled) { border-color: oklch(0.40 0.025 285); }
+.field-input:focus {
+  outline: none; border-color: var(--primary);
+  box-shadow: 0 0 0 3px oklch(0.72 0.115 75 / 0.18);
+  background-color: oklch(0.24 0.018 285);
+}
+.field-input:disabled { opacity: 0.45; cursor: not-allowed; }
+textarea.field-input { resize: vertical; min-height: 96px; line-height: 1.5; }
+select.field-input {
+  appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none'><path d='M1 1.5L6 6.5L11 1.5' stroke='%23b08a4a' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+  background-repeat: no-repeat; background-position: right 1rem center; padding-right: 2.5rem;
+}
+select.field-input option { background: oklch(0.18 0.014 285); color: var(--foreground); }
+
+.grid-2 { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
+@media (min-width: 640px) { .grid-2 { grid-template-columns: 1fr 1fr; } }
+
+.label-row { display: flex; align-items: center; justify-content: space-between; }
+.badge-soon { font-size: 0.6rem; letter-spacing: 0.15em; color: oklch(0.72 0.115 75 / 0.7); }
+
+.actions { display: flex; flex-direction: column-reverse; gap: 0.75rem; }
+@media (min-width: 640px) { .actions { flex-direction: row; justify-content: flex-end; } }
+
+.btn-primary, .btn-ghost {
+  font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+  font-size: 0.78rem; padding: 0.85rem 1.6rem; border-radius: var(--radius);
+  cursor: pointer; transition: all 0.2s ease; font-family: var(--font-body);
+}
+.btn-primary {
+  background: var(--gradient-bronze); color: var(--primary-foreground);
+  border: 1px solid oklch(0.82 0.135 82 / 0.5); box-shadow: var(--shadow-gold);
+}
+.btn-primary:hover { filter: brightness(1.08); box-shadow: 0 12px 32px -10px oklch(0.72 0.115 75 / 0.6); }
+.btn-primary:active { transform: translateY(1px); }
+.btn-ghost {
+  background: transparent; color: var(--muted-foreground);
+  border: 1px solid var(--border); font-weight: 500;
+}
+.btn-ghost:hover { color: var(--primary); border-color: var(--primary); }
+
+.confirmation { text-align: center; font-size: 0.875rem; font-style: italic; color: var(--primary); display: none; }
+.confirmation.show { display: block; }
+
+footer { margin-top: 2.5rem; text-align: center; font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; color: oklch(0.62 0.018 80 / 0.7); }
+</style>
 </head>
 <body>
-    <div class="container">
-        <!-- Header -->
-        <header class="header">
-            <div class="header-content">
-                <!-- Sleek, minimal gothic raven -->
-                <svg class="raven-icon" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
-                    <defs>
-                        <linearGradient id="ravenGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" style="stop-color:#c9a961;stop-opacity:1" />
-                            <stop offset="100%" style="stop-color:#8b7355;stop-opacity:1" />
-                        </linearGradient>
-                    </defs>
-                    <!-- Head (small, sleek) -->
-                    <ellipse cx="50" cy="25" rx="10" ry="12" fill="url(#ravenGradient)"/>
-                    <!-- Beak (long, pointed) -->
-                    <path d="M 58 25 L 78 23 L 58 27 Z" fill="url(#ravenGradient)"/>
-                    <!-- Eye -->
-                    <circle cx="54" cy="22" r="1.5" fill="#1a1a1a"/>
-                    <!-- Neck -->
-                    <path d="M 48 35 L 46 50" stroke="url(#ravenGradient)" stroke-width="6" fill="none" stroke-linecap="round"/>
-                    <!-- Body (sleek, tapered) -->
-                    <path d="M 45 50 Q 35 60 38 85 Q 45 100 55 100 Q 62 100 65 85 Q 68 60 55 50 Q 50 48 45 50" fill="url(#ravenGradient)"/>
-                    <!-- Wings (angular, gothic) -->
-                    <path d="M 42 60 Q 25 70 22 90" stroke="url(#ravenGradient)" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.7"/>
-                    <path d="M 62 60 Q 78 70 82 90" stroke="url(#ravenGradient)" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.7"/>
-                    <!-- Tail feather accent -->
-                    <path d="M 50 100 L 48 115" stroke="url(#ravenGradient)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-                </svg>
-                <h1>Raven's Eye</h1>
-                <p class="tagline">A personal bird-watching log</p>
-            </div>
-        </header>
-
-        <!-- Main Form -->
-        <main class="main-content">
-            <section class="form-section">
-                <div class="form-header">
-                    <!-- Minimal icon for log a sighting -->
-                    <svg class="log-icon" viewBox="0 0 50 60" xmlns="http://www.w3.org/2000/svg">
-                        <defs>
-                            <linearGradient id="logGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" style="stop-color:#c9a961;stop-opacity:1" />
-                                <stop offset="100%" style="stop-color:#8b7355;stop-opacity:1" />
-                            </linearGradient>
-                        </defs>
-                        <!-- Head (small, sleek) -->
-                        <ellipse cx="25" cy="12" rx="7" ry="9" fill="url(#logGradient)"/>
-                        <!-- Beak (pointed) -->
-                        <path d="M 31 12 L 43 11 L 31 14 Z" fill="url(#logGradient)"/>
-                        <!-- Eye -->
-                        <circle cx="29" cy="10" r="1" fill="#1a1a1a"/>
-                        <!-- Body (sleek) -->
-                        <path d="M 23 20 Q 15 28 17 45 Q 22 52 30 52 Q 35 52 38 45 Q 40 28 33 20 Q 28 18 23 20" fill="url(#logGradient)"/>
-                        <!-- Wing accent -->
-                        <path d="M 20 30 Q 10 35 8 45" stroke="url(#logGradient)" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.6"/>
-                    </svg>
-                    <h2>Log a Sighting</h2>
-                </div>
-
-                <form id="sightingForm" class="sighting-form">
-                    <!-- Bird Type -->
-                    <div class="form-group">
-                        <label for="birdType">Bird Type</label>
-                        <select id="birdType" name="birdType" required>
-                            <option value="">Select a bird...</option>
-                            <option value="crow">Crow</option>
-                            <option value="jay">Jay</option>
-                            <option value="robin">Robin</option>
-                            <option value="raven">Raven</option>
-                            <option value="other">Other</option>
-                        </select>
-                    </div>
-
-                    <!-- Specific Bird Name (optional) -->
-                    <div class="form-group">
-                        <label for="specificName">Individual Name (optional)</label>
-                        <input
-                            type="text"
-                            id="specificName"
-                            name="specificName"
-                            placeholder="e.g., Dranzer, Beckett"
-                        >
-                    </div>
-
-                    <!-- Behavior -->
-                    <div class="form-group">
-                        <label for="behavior">Behavior / Notes</label>
-                        <textarea
-                            id="behavior"
-                            name="behavior"
-                            placeholder="What was the bird doing? Any notable behaviors?"
-                            rows="3"
-                        ></textarea>
-                    </div>
-
-                    <!-- Date & Time -->
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="dateTime">Date & Time</label>
-                            <input
-                                type="datetime-local"
-                                id="dateTime"
-                                name="dateTime"
-                                required
-                            >
-                        </div>
-
-                        <!-- Time of Day -->
-                        <div class="form-group">
-                            <label for="timeOfDay">Time of Day</label>
-                            <select id="timeOfDay" name="timeOfDay" required>
-                                <option value="">Select...</option>
-                                <option value="dawn">Dawn (5am-7am)</option>
-                                <option value="morning">Morning (7am-12pm)</option>
-                                <option value="afternoon">Afternoon (12pm-5pm)</option>
-                                <option value="evening">Evening (5pm-8pm)</option>
-                                <option value="dusk">Dusk (8pm-10pm)</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- Weather -->
-                    <div class="form-group">
-                        <label for="weather">Weather</label>
-                        <select id="weather" name="weather" required>
-                            <option value="">Select weather...</option>
-                            <option value="sunny">Sunny</option>
-                            <option value="cloudy">Cloudy</option>
-                            <option value="rainy">Rainy</option>
-                            <option value="overcast">Overcast</option>
-                            <option value="partly-cloudy">Partly Cloudy</option>
-                        </select>
-                    </div>
-
-                    <!-- Surrounding Conditions -->
-                    <div class="form-group">
-                        <label for="conditions">Surrounding Conditions</label>
-                        <textarea
-                            id="conditions"
-                            name="conditions"
-                            placeholder="Location, habitat, nearby activity, etc."
-                            rows="2"
-                        ></textarea>
-                    </div>
-
-                    <!-- Photo Upload (v2 feature) -->
-                    <div class="form-group">
-                        <label for="photoUrl">Photo URL (coming soon)</label>
-                        <input
-                            type="text"
-                            id="photoUrl"
-                            name="photoUrl"
-                            placeholder="Photo upload coming in v2"
-                            disabled
-                        >
-                        <small class="help-text">Photo uploads will be available in the next version</small>
-                    </div>
-
-                    <!-- Submit -->
-                    <div class="form-actions">
-                        <button type="submit" class="btn btn-primary">Log Sighting</button>
-                        <button type="reset" class="btn btn-secondary">Clear</button>
-                    </div>
-                </form>
-
-                <!-- Success Message -->
-                <div id="successMessage" class="success-message hidden">
-                    <strong>✓ Sighting logged!</strong> (We'll save to GitHub in v2)
-                </div>
-            </section>
-        </main>
-
-        <!-- Footer -->
-        <footer class="footer">
-            <p>Raven's Eye v1.0 | Mobile-first bird watching</p>
-        </footer>
+<main>
+  <header class="header">
+    <svg class="raven-mark" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Raven's Eye logo">
+      <defs>
+        <linearGradient id="bronze" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="oklch(0.55 0.105 60)"/>
+          <stop offset="50%" stop-color="oklch(0.72 0.115 75)"/>
+          <stop offset="100%" stop-color="oklch(0.82 0.135 82)"/>
+        </linearGradient>
+      </defs>
+      <path fill="url(#bronze)" d="M12 34c0-9 7-16 16-16 4 0 7 1 10 3l8-3-3 7c2 3 3 6 3 9 0 4-2 7-5 9l-2 8h-4l-1-5c-2 1-4 1-6 1l-1 4h-4l-1-5c-6-2-10-7-10-12z"/>
+      <circle cx="40" cy="27" r="1.6" fill="oklch(0.16 0.012 285)"/>
+      <path stroke="url(#bronze)" stroke-width="1.5" stroke-linecap="round" d="M30 51v6M36 51v6"/>
+    </svg>
+    <h1 class="title">Raven&rsquo;s Eye</h1>
+    <p class="tagline">A personal bird-watching log</p>
+    <div class="divider-row">
+      <hr class="ornament" /><span class="star">✦</span><hr class="ornament" />
     </div>
+  </header>
 
-    <script src="js/app.js"></script>
+  <section class="card">
+    <div class="card-head">
+      <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path fill="url(#bronze)" d="M12 34c0-9 7-16 16-16 4 0 7 1 10 3l8-3-3 7c2 3 3 6 3 9 0 4-2 7-5 9l-2 8h-4l-1-5c-2 1-4 1-6 1l-1 4h-4l-1-5c-6-2-10-7-10-12z"/>
+        <circle cx="40" cy="27" r="1.6" fill="oklch(0.16 0.012 285)"/>
+      </svg>
+      <h2 class="card-title">Log a Sighting</h2>
+    </div>
+    <p class="card-sub">Record what you saw</p>
+
+    <form id="sighting-form">
+      <div>
+        <label for="birdType" class="field-label">Bird Type</label>
+        <select id="birdType" class="field-input" required>
+          <option value="" disabled selected>Select a species</option>
+          <option>Crow</option><option>Jay</option><option>Robin</option><option>Raven</option><option>Other</option>
+        </select>
+      </div>
+      <div>
+        <label for="individualName" class="field-label">Individual Name <span class="opt">(optional)</span></label>
+        <input id="individualName" type="text" class="field-input" placeholder="e.g. Dranzer" />
+      </div>
+      <div>
+        <label for="behavior" class="field-label">Behavior / Notes</label>
+        <textarea id="behavior" class="field-input" placeholder="What was the bird doing?"></textarea>
+      </div>
+      <div class="grid-2">
+        <div>
+          <label for="date" class="field-label">Date</label>
+          <input id="date" type="date" class="field-input" required />
+        </div>
+        <div>
+          <label for="timeOfDay" class="field-label">Time of Day</label>
+          <select id="timeOfDay" class="field-input" required>
+            <option value="" disabled selected>Select…</option>
+            <option>Dawn</option><option>Morning</option><option>Midday</option>
+            <option>Afternoon</option><option>Evening</option><option>Dusk</option><option>Night</option>
+          </select>
+        </div>
+      </div>
+      <div>
+        <label for="weather" class="field-label">Weather</label>
+        <select id="weather" class="field-input" required>
+          <option value="" disabled selected>Select conditions</option>
+          <option>Sunny</option><option>Cloudy</option><option>Rainy</option>
+          <option>Overcast</option><option>Partly Cloudy</option><option>Snowy</option>
+        </select>
+      </div>
+      <div>
+        <label for="surroundings" class="field-label">Surrounding Conditions</label>
+        <textarea id="surroundings" class="field-input" placeholder="Habitat, location, ambience…"></textarea>
+      </div>
+      <div>
+        <label for="photoUrl" class="field-label label-row">
+          <span>Photo URL</span><span class="badge-soon">Coming in v2</span>
+        </label>
+        <input id="photoUrl" type="url" class="field-input" placeholder="https://…" disabled />
+      </div>
+
+      <hr class="ornament full" />
+
+      <div class="actions">
+        <button type="reset" class="btn-ghost">Clear</button>
+        <button type="submit" class="btn-primary">Log Sighting</button>
+      </div>
+      <p class="confirmation" id="confirmation">Sighting recorded in your ledger.</p>
+    </form>
+  </section>
+
+  <footer>Raven&rsquo;s Eye v1.0 &nbsp;|&nbsp; Mobile-first bird watching</footer>
+</main>
+<script>
+  // Initialize date field with today's date
+  function initializeDateField() {
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('date').value = today;
+  }
+
+  // Handle form submission
+  const form = document.getElementById('sighting-form');
+  const conf = document.getElementById('confirmation');
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    // Collect form data
+    const formData = {
+      birdType: document.getElementById('birdType').value,
+      individualName: document.getElementById('individualName').value,
+      behavior: document.getElementById('behavior').value,
+      date: document.getElementById('date').value,
+      timeOfDay: document.getElementById('timeOfDay').value,
+      weather: document.getElementById('weather').value,
+      surroundings: document.getElementById('surroundings').value,
+      photoUrl: document.getElementById('photoUrl').value,
+      timestamp: new Date().toISOString()
+    };
+
+    // Log to console (for v2: will save to GitHub)
+    console.log('Sighting logged:', formData);
+
+    // Show confirmation
+    conf.classList.add('show');
+    setTimeout(() => conf.classList.remove('show'), 2400);
+
+    // Reset form
+    form.reset();
+    initializeDateField();
+  });
+
+  // Initialize on page load
+  document.addEventListener('DOMContentLoaded', initializeDateField);
+</script>
 </body>
 </html>
