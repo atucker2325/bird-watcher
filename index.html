@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Raven's Eye - Bird Watcher Log</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <svg class="raven-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="ravenGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#9d4edd;stop-opacity:1" />
+                            <stop offset="50%" style="stop-color:#00d9ff;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#0a9396;stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <!-- Raven silhouette -->
+                    <circle cx="50" cy="35" r="15" fill="url(#ravenGradient)"/>
+                    <ellipse cx="50" cy="60" rx="20" ry="25" fill="url(#ravenGradient)"/>
+                    <path d="M 65 50 Q 75 48 80 52" stroke="url(#ravenGradient)" stroke-width="3" fill="none" stroke-linecap="round"/>
+                    <circle cx="48" cy="32" r="3" fill="#1a1a1a"/>
+                </svg>
+                <h1>Raven's Eye</h1>
+                <p class="tagline">A personal bird-watching log</p>
+            </div>
+        </header>
+
+        <!-- Main Form -->
+        <main class="main-content">
+            <section class="form-section">
+                <h2>Log a Sighting</h2>
+
+                <form id="sightingForm" class="sighting-form">
+                    <!-- Bird Type -->
+                    <div class="form-group">
+                        <label for="birdType">Bird Type</label>
+                        <select id="birdType" name="birdType" required>
+                            <option value="">Select a bird...</option>
+                            <option value="crow">Crow</option>
+                            <option value="jay">Jay</option>
+                            <option value="robin">Robin</option>
+                            <option value="raven">Raven</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+
+                    <!-- Specific Bird Name (optional) -->
+                    <div class="form-group">
+                        <label for="specificName">Individual Name (optional)</label>
+                        <input
+                            type="text"
+                            id="specificName"
+                            name="specificName"
+                            placeholder="e.g., Dranzer, Beckett"
+                        >
+                    </div>
+
+                    <!-- Behavior -->
+                    <div class="form-group">
+                        <label for="behavior">Behavior / Notes</label>
+                        <textarea
+                            id="behavior"
+                            name="behavior"
+                            placeholder="What was the bird doing? Any notable behaviors?"
+                            rows="3"
+                        ></textarea>
+                    </div>
+
+                    <!-- Date & Time -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="dateTime">Date & Time</label>
+                            <input
+                                type="datetime-local"
+                                id="dateTime"
+                                name="dateTime"
+                                required
+                            >
+                        </div>
+
+                        <!-- Time of Day -->
+                        <div class="form-group">
+                            <label for="timeOfDay">Time of Day</label>
+                            <select id="timeOfDay" name="timeOfDay" required>
+                                <option value="">Select...</option>
+                                <option value="dawn">Dawn (5am-7am)</option>
+                                <option value="morning">Morning (7am-12pm)</option>
+                                <option value="afternoon">Afternoon (12pm-5pm)</option>
+                                <option value="evening">Evening (5pm-8pm)</option>
+                                <option value="dusk">Dusk (8pm-10pm)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Weather -->
+                    <div class="form-group">
+                        <label for="weather">Weather</label>
+                        <select id="weather" name="weather" required>
+                            <option value="">Select weather...</option>
+                            <option value="sunny">Sunny</option>
+                            <option value="cloudy">Cloudy</option>
+                            <option value="rainy">Rainy</option>
+                            <option value="overcast">Overcast</option>
+                            <option value="partly-cloudy">Partly Cloudy</option>
+                        </select>
+                    </div>
+
+                    <!-- Surrounding Conditions -->
+                    <div class="form-group">
+                        <label for="conditions">Surrounding Conditions</label>
+                        <textarea
+                            id="conditions"
+                            name="conditions"
+                            placeholder="Location, habitat, nearby activity, etc."
+                            rows="2"
+                        ></textarea>
+                    </div>
+
+                    <!-- Photo Upload (v2 feature) -->
+                    <div class="form-group">
+                        <label for="photoUrl">Photo URL (coming soon)</label>
+                        <input
+                            type="text"
+                            id="photoUrl"
+                            name="photoUrl"
+                            placeholder="Photo upload coming in v2"
+                            disabled
+                        >
+                        <small class="help-text">Photo uploads will be available in the next version</small>
+                    </div>
+
+                    <!-- Submit -->
+                    <button type="submit" class="btn btn-primary">Log Sighting</button>
+                    <button type="reset" class="btn btn-secondary">Clear Form</button>
+                </form>
+
+                <!-- Success Message -->
+                <div id="successMessage" class="success-message hidden">
+                    <strong>✓ Sighting logged!</strong> (For now, this only shows on screen. We'll save to GitHub next.)
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Raven's Eye v1.0 | Mobile-first bird watching</p>
+        </footer>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
