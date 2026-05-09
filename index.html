@@ -11,19 +11,29 @@
         <!-- Header -->
         <header class="header">
             <div class="header-content">
-                <svg class="raven-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <!-- Sleek, minimal gothic raven -->
+                <svg class="raven-icon" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
                     <defs>
                         <linearGradient id="ravenGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" style="stop-color:#9d4edd;stop-opacity:1" />
-                            <stop offset="50%" style="stop-color:#00d9ff;stop-opacity:1" />
-                            <stop offset="100%" style="stop-color:#0a9396;stop-opacity:1" />
+                            <stop offset="0%" style="stop-color:#c9a961;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#8b7355;stop-opacity:1" />
                         </linearGradient>
                     </defs>
-                    <!-- Raven silhouette -->
-                    <circle cx="50" cy="35" r="15" fill="url(#ravenGradient)"/>
-                    <ellipse cx="50" cy="60" rx="20" ry="25" fill="url(#ravenGradient)"/>
-                    <path d="M 65 50 Q 75 48 80 52" stroke="url(#ravenGradient)" stroke-width="3" fill="none" stroke-linecap="round"/>
-                    <circle cx="48" cy="32" r="3" fill="#1a1a1a"/>
+                    <!-- Head -->
+                    <circle cx="60" cy="35" r="18" fill="url(#ravenGradient)"/>
+                    <!-- Beak -->
+                    <path d="M 75 35 L 92 33 L 75 38 Z" fill="url(#ravenGradient)"/>
+                    <!-- Eye -->
+                    <circle cx="66" cy="32" r="2.5" fill="#1a1a1a"/>
+                    <!-- Body -->
+                    <path d="M 50 52 Q 45 65 50 85 Q 60 92 70 85 Q 75 65 70 52 Q 60 48 60 48 Q 60 48 50 52" fill="url(#ravenGradient)"/>
+                    <!-- Wing detail -->
+                    <path d="M 55 60 Q 50 70 52 82" stroke="url(#ravenGradient)" stroke-width="2" fill="none" stroke-linecap="round"/>
+                    <path d="M 62 60 Q 68 70 67 82" stroke="url(#ravenGradient)" stroke-width="2" fill="none" stroke-linecap="round"/>
+                    <!-- Tail feathers -->
+                    <path d="M 50 80 L 42 100" stroke="url(#ravenGradient)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                    <path d="M 60 82 L 60 102" stroke="url(#ravenGradient)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                    <path d="M 70 80 L 78 100" stroke="url(#ravenGradient)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
                 </svg>
                 <h1>Raven's Eye</h1>
                 <p class="tagline">A personal bird-watching log</p>
@@ -33,7 +43,28 @@
         <!-- Main Form -->
         <main class="main-content">
             <section class="form-section">
-                <h2>Log a Sighting</h2>
+                <div class="form-header">
+                    <!-- Minimal icon for log a sighting -->
+                    <svg class="log-icon" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="logGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#c9a961;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#8b7355;stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                        <!-- Raven head in profile -->
+                        <circle cx="30" cy="22" r="12" fill="url(#logGradient)"/>
+                        <!-- Beak -->
+                        <path d="M 40 22 L 52 20 L 40 25 Z" fill="url(#logGradient)"/>
+                        <!-- Eye -->
+                        <circle cx="35" cy="20" r="1.5" fill="#1a1a1a"/>
+                        <!-- Body -->
+                        <ellipse cx="30" cy="42" rx="14" ry="16" fill="url(#logGradient)"/>
+                        <!-- Wing outline -->
+                        <path d="M 22 35 Q 18 42 20 50" stroke="url(#logGradient)" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+                    </svg>
+                    <h2>Log a Sighting</h2>
+                </div>
 
                 <form id="sightingForm" class="sighting-form">
                     <!-- Bird Type -->
@@ -135,13 +166,15 @@
                     </div>
 
                     <!-- Submit -->
-                    <button type="submit" class="btn btn-primary">Log Sighting</button>
-                    <button type="reset" class="btn btn-secondary">Clear Form</button>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Log Sighting</button>
+                        <button type="reset" class="btn btn-secondary">Clear</button>
+                    </div>
                 </form>
 
                 <!-- Success Message -->
                 <div id="successMessage" class="success-message hidden">
-                    <strong>✓ Sighting logged!</strong> (For now, this only shows on screen. We'll save to GitHub next.)
+                    <strong>✓ Sighting logged!</strong> (We'll save to GitHub in v2)
                 </div>
             </section>
         </main>
