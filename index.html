@@ -43,7 +43,17 @@ h1, h2, h3 { font-family: var(--font-display); letter-spacing: 0.01em; margin: 0
 main { max-width: 42rem; margin: 0 auto; padding: 2.5rem 1.25rem; }
 @media (min-width: 640px) { main { padding: 4rem 1.25rem; } }
 
-.header { text-align: center; }
+.header { text-align: center; position: relative; }
+.settings-btn {
+  position: absolute; top: 0; right: 0;
+  background: transparent; border: 1px solid var(--border);
+  color: var(--primary); padding: 0.5rem;
+  border-radius: var(--radius); cursor: pointer;
+  font-size: 1.2rem; line-height: 1;
+  transition: all 0.2s ease;
+}
+.settings-btn:hover { border-color: var(--primary); background: oklch(0.22 0.016 285); }
+
 .raven-mark {
   width: 72px; height: 72px; margin: 0 auto;
   filter: drop-shadow(0 4px 18px oklch(0.72 0.115 75 / 0.35));
@@ -55,6 +65,23 @@ main { max-width: 42rem; margin: 0 auto; padding: 2.5rem 1.25rem; }
 .ornament { height: 1px; background: var(--gradient-hairline); border: 0; width: 4rem; }
 .ornament.full { width: 100%; }
 .star { color: var(--primary); font-size: 0.75rem; letter-spacing: 0.4em; }
+
+.modal-overlay {
+  display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.5); z-index: 999;
+}
+.modal-overlay.show { display: block; }
+.modal {
+  display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  background: var(--card); border: 1px solid var(--border); border-radius: calc(var(--radius) + 6px);
+  padding: 2rem; max-width: 90%; width: 100%; max-height: 90vh; overflow-y: auto;
+  z-index: 1000; box-shadow: var(--shadow-elegant);
+}
+.modal.show { display: block; }
+.modal-close { position: absolute; top: 1rem; right: 1rem; background: none; border: none; color: var(--primary); font-size: 1.5rem; cursor: pointer; }
+.modal h2 { margin-bottom: 1.5rem; }
+.modal-body { display: flex; flex-direction: column; gap: 1rem; }
+.token-input { font-family: monospace; font-size: 0.85rem; }
 
 .card {
   margin-top: 2.5rem;
@@ -74,7 +101,7 @@ main { max-width: 42rem; margin: 0 auto; padding: 2.5rem 1.25rem; }
 .card::after { bottom: -1px; right: -1px; border-left: 0; border-top: 0; }
 
 .card-head { display: flex; align-items: center; gap: 0.75rem; }
-.card-head svg { width: 28px; height: 28px; }
+.card-head img { width: 28px; height: 28px; }
 .card-title { font-size: 1.5rem; }
 .card-sub { margin: 0.25rem 0 0; font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted-foreground); }
 
@@ -90,6 +117,8 @@ form { margin-top: 1.75rem; display: flex; flex-direction: column; gap: 1.5rem; 
   border: 1px solid var(--border); border-radius: var(--radius);
   padding: 0.7rem 0.9rem; font-size: 0.95rem; font-family: var(--font-body);
   transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+  max-width: 100%;
+  -webkit-appearance: none;
 }
 .field-input::placeholder { color: oklch(0.5 0.02 80 / 0.7); }
 .field-input:hover:not(:disabled) { border-color: oklch(0.40 0.025 285); }
@@ -120,6 +149,7 @@ select.field-input option { background: oklch(0.18 0.014 285); color: var(--fore
   font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
   font-size: 0.78rem; padding: 0.85rem 1.6rem; border-radius: var(--radius);
   cursor: pointer; transition: all 0.2s ease; font-family: var(--font-body);
+  border: none;
 }
 .btn-primary {
   background: var(--gradient-bronze); color: var(--primary-foreground);
@@ -135,13 +165,37 @@ select.field-input option { background: oklch(0.18 0.014 285); color: var(--fore
 
 .confirmation { text-align: center; font-size: 0.875rem; font-style: italic; color: var(--primary); display: none; }
 .confirmation.show { display: block; }
+.confirmation.error { color: oklch(0.72 0.155 20); }
+
+.status-msg { font-size: 0.85rem; padding: 0.75rem; border-radius: var(--radius); display: none; }
+.status-msg.show { display: block; }
+.status-msg.success { background: oklch(0.35 0.08 120 / 0.15); color: oklch(0.72 0.155 120); border: 1px solid oklch(0.72 0.155 120 / 0.3); }
+.status-msg.error { background: oklch(0.35 0.08 20 / 0.15); color: oklch(0.72 0.155 20); border: 1px solid oklch(0.72 0.155 20 / 0.3); }
 
 footer { margin-top: 2.5rem; text-align: center; font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; color: oklch(0.62 0.018 80 / 0.7); }
 </style>
 </head>
 <body>
+<div class="modal-overlay" id="settingsOverlay"></div>
+<div class="modal" id="settingsModal">
+  <button class="modal-close" id="modalClose">&times;</button>
+  <h2>Settings</h2>
+  <div class="modal-body">
+    <div>
+      <label for="githubToken" class="field-label">GitHub Personal Access Token</label>
+      <p style="font-size: 0.85rem; color: var(--muted-foreground); margin: 0.5rem 0;">
+        Paste your fine-grained token here. It's stored locally on this device only.
+      </p>
+      <input type="password" id="githubToken" class="field-input token-input" placeholder="github_pat_..." />
+      <button class="btn-primary" id="saveTokenBtn" style="margin-top: 1rem;">Save Token</button>
+      <div id="tokenStatus" class="status-msg"></div>
+    </div>
+  </div>
+</div>
+
 <main>
   <header class="header">
+    <button class="settings-btn" id="settingsBtn" title="Settings">⚙️</button>
     <img class="raven-mark" src="raven.png" alt="Raven's Eye logo" />
     <h1 class="title">Raven&rsquo;s Eye</h1>
     <p class="tagline">A personal bird-watching log</p>
@@ -213,9 +267,11 @@ footer { margin-top: 2.5rem; text-align: center; font-size: 0.75rem; letter-spac
 
       <hr class="ornament full" />
 
+      <div id="submitStatus" class="status-msg"></div>
+
       <div class="actions">
         <button type="reset" class="btn-ghost">Clear</button>
-        <button type="submit" class="btn-primary">Log Sighting</button>
+        <button type="submit" class="btn-primary" id="submitBtn">Log Sighting</button>
       </div>
       <p class="confirmation" id="confirmation">Sighting recorded in your ledger.</p>
     </form>
@@ -223,22 +279,79 @@ footer { margin-top: 2.5rem; text-align: center; font-size: 0.75rem; letter-spac
 
   <footer>Raven&rsquo;s Eye v1.0 &nbsp;|&nbsp; Mobile-first bird watching</footer>
 </main>
+
 <script>
-  // Initialize date field with today's date
-  function initializeDateField() {
-    const today = new Date().toISOString().split('T')[0];
-    document.getElementById('date').value = today;
+const GITHUB_OWNER = 'atucker2325';
+const GITHUB_REPO = 'bird-watcher';
+const ENTRIES_FILE = 'sightings.json';
+
+// Settings modal
+const settingsBtn = document.getElementById('settingsBtn');
+const settingsModal = document.getElementById('settingsModal');
+const settingsOverlay = document.getElementById('settingsOverlay');
+const modalClose = document.getElementById('modalClose');
+const saveTokenBtn = document.getElementById('saveTokenBtn');
+const tokenInput = document.getElementById('githubToken');
+const tokenStatus = document.getElementById('tokenStatus');
+
+settingsBtn.addEventListener('click', () => {
+  settingsOverlay.classList.add('show');
+  settingsModal.classList.add('show');
+  tokenInput.value = localStorage.getItem('github_token') || '';
+});
+
+modalClose.addEventListener('click', closeModal);
+settingsOverlay.addEventListener('click', closeModal);
+
+function closeModal() {
+  settingsOverlay.classList.remove('show');
+  settingsModal.classList.remove('show');
+  tokenStatus.classList.remove('show');
+}
+
+saveTokenBtn.addEventListener('click', () => {
+  const token = tokenInput.value.trim();
+  if (!token) {
+    showTokenStatus('Please paste your GitHub token', 'error');
+    return;
+  }
+  localStorage.setItem('github_token', token);
+  showTokenStatus('Token saved locally on this device', 'success');
+  setTimeout(closeModal, 1500);
+});
+
+function showTokenStatus(msg, type) {
+  tokenStatus.textContent = msg;
+  tokenStatus.className = `status-msg show ${type}`;
+}
+
+// Initialize date field
+function initializeDateField() {
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('date').value = today;
+}
+
+// Form submission
+const form = document.getElementById('sighting-form');
+const submitBtn = document.getElementById('submitBtn');
+const submitStatus = document.getElementById('submitStatus');
+const confirmation = document.getElementById('confirmation');
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const token = localStorage.getItem('github_token');
+  if (!token) {
+    showSubmitStatus('Please set your GitHub token in Settings first', 'error');
+    return;
   }
 
-  // Handle form submission
-  const form = document.getElementById('sighting-form');
-  const conf = document.getElementById('confirmation');
+  submitBtn.disabled = true;
+  showSubmitStatus('Saving to GitHub...', 'loading');
 
-  form.addEventListener('submit', (e) => {
-    e.preventDefault();
-
+  try {
     // Collect form data
-    const formData = {
+    const entry = {
       birdType: document.getElementById('birdType').value,
       individualName: document.getElementById('individualName').value,
       behavior: document.getElementById('behavior').value,
@@ -246,24 +359,91 @@ footer { margin-top: 2.5rem; text-align: center; font-size: 0.75rem; letter-spac
       timeOfDay: document.getElementById('timeOfDay').value,
       weather: document.getElementById('weather').value,
       surroundings: document.getElementById('surroundings').value,
-      photoUrl: document.getElementById('photoUrl').value,
       timestamp: new Date().toISOString()
     };
 
-    // Log to console (for v2: will save to GitHub)
-    console.log('Sighting logged:', formData);
+    // Save to GitHub
+    await saveToGitHub(token, entry);
 
-    // Show confirmation
-    conf.classList.add('show');
-    setTimeout(() => conf.classList.remove('show'), 2400);
-
-    // Reset form
+    showSubmitStatus('', '');
+    confirmation.classList.add('show');
     form.reset();
     initializeDateField();
-  });
+    setTimeout(() => confirmation.classList.remove('show'), 3000);
+  } catch (error) {
+    showSubmitStatus(`Error: ${error.message}`, 'error');
+  } finally {
+    submitBtn.disabled = false;
+  }
+});
 
-  // Initialize on page load
-  document.addEventListener('DOMContentLoaded', initializeDateField);
+async function saveToGitHub(token, newEntry) {
+  // Get current file
+  let entries = [];
+  let sha = null;
+
+  try {
+    const getResp = await fetch(
+      `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${ENTRIES_FILE}`,
+      {
+        headers: {
+          'Authorization': `token ${token}`,
+          'Accept': 'application/vnd.github.v3+json'
+        }
+      }
+    );
+
+    if (getResp.ok) {
+      const data = await getResp.json();
+      sha = data.sha;
+      entries = JSON.parse(atob(data.content));
+    } else if (getResp.status !== 404) {
+      throw new Error(`GitHub API error: ${getResp.status}`);
+    }
+  } catch (error) {
+    if (!error.message.includes('404')) throw error;
+  }
+
+  // Add new entry
+  entries.push(newEntry);
+
+  // Upload to GitHub
+  const content = btoa(JSON.stringify(entries, null, 2));
+  const message = `Log sighting: ${newEntry.birdType} on ${newEntry.date}`;
+
+  const putResp = await fetch(
+    `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${ENTRIES_FILE}`,
+    {
+      method: 'PUT',
+      headers: {
+        'Authorization': `token ${token}`,
+        'Accept': 'application/vnd.github.v3+json'
+      },
+      body: JSON.stringify({
+        message,
+        content,
+        ...(sha && { sha })
+      })
+    }
+  );
+
+  if (!putResp.ok) {
+    const error = await putResp.json();
+    throw new Error(error.message || `Failed to save (${putResp.status})`);
+  }
+}
+
+function showSubmitStatus(msg, type) {
+  if (!msg) {
+    submitStatus.classList.remove('show');
+    return;
+  }
+  submitStatus.textContent = msg;
+  submitStatus.className = `status-msg show ${type}`;
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', initializeDateField);
 </script>
 </body>
 </html>
