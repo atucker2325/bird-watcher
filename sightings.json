@@ -1,1 +1,13 @@
-[]
+[
+  {
+    "birdType": "Robin",
+    "individualName": "",
+    "behavior": "Robin was perching on the feeder even after I had taken the food inside for the night.",
+    "date": "2026-05-11",
+    "timeOfDay": "Evening (5pm–8pm)",
+    "weather": "Sunny",
+    "surroundings": "Backyard. There was a second robin nearby. Couldn't see if there were any neighbors in the yard or anything.",
+    "timestamp": "2026-05-12T01:48:38.986Z",
+    "favorite": false
+  }
+]
