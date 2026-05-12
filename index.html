@@ -83,6 +83,23 @@ main { max-width: 42rem; margin: 0 auto; padding: 2.5rem 1.25rem; }
 .modal-body { display: flex; flex-direction: column; gap: 1rem; }
 .token-input { font-family: monospace; font-size: 0.85rem; }
 
+.tabs {
+  display: flex; gap: 0.5rem; margin-top: 2.5rem; border-bottom: 1px solid var(--border); padding-bottom: 1rem;
+}
+.tab-btn {
+  background: transparent; border: none; color: var(--muted-foreground);
+  padding: 0.5rem 1rem; cursor: pointer; font-size: 0.9rem;
+  font-weight: 500; letter-spacing: 0.05em;
+  transition: all 0.2s ease; border-bottom: 2px solid transparent;
+}
+.tab-btn.active {
+  color: var(--primary); border-bottom-color: var(--primary);
+}
+.tab-btn:hover { color: var(--primary); }
+
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
 .card {
   margin-top: 2.5rem;
   padding: 1.5rem;
@@ -171,6 +188,26 @@ select.field-input option { background: oklch(0.18 0.014 285); color: var(--fore
 .status-msg.show { display: block; }
 .status-msg.success { background: oklch(0.35 0.08 120 / 0.15); color: oklch(0.72 0.155 120); border: 1px solid oklch(0.72 0.155 120 / 0.3); }
 .status-msg.error { background: oklch(0.35 0.08 20 / 0.15); color: oklch(0.72 0.155 20); border: 1px solid oklch(0.72 0.155 20 / 0.3); }
+.status-msg.loading { background: oklch(0.35 0.08 75 / 0.15); color: oklch(0.72 0.155 75); border: 1px solid oklch(0.72 0.155 75 / 0.3); }
+
+.entries-list { display: flex; flex-direction: column; gap: 1.25rem; }
+.entry-item {
+  padding: 1.25rem; background: var(--input); border: 1px solid var(--border);
+  border-radius: var(--radius); cursor: pointer; transition: all 0.2s ease;
+}
+.entry-item:hover { border-color: var(--primary); background: oklch(0.24 0.018 285); }
+.entry-header { display: flex; justify-content: space-between; align-items: start; }
+.entry-bird { font-weight: 600; font-size: 1rem; }
+.entry-date { font-size: 0.85rem; color: var(--muted-foreground); }
+.entry-time { font-size: 0.8rem; color: var(--muted-foreground); margin-top: 0.25rem; }
+.entry-individual { color: var(--primary); font-style: italic; margin-top: 0.5rem; }
+.entry-details { display: none; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border); }
+.entry-details.show { display: block; }
+.entry-field { margin-bottom: 0.75rem; }
+.entry-field-label { font-weight: 500; font-size: 0.8rem; color: var(--muted-foreground); text-transform: uppercase; }
+.entry-field-value { margin-top: 0.25rem; color: var(--foreground); }
+
+.empty-state { text-align: center; padding: 2rem; color: var(--muted-foreground); }
 
 footer { margin-top: 2.5rem; text-align: center; font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; color: oklch(0.62 0.018 80 / 0.7); }
 </style>
@@ -204,78 +241,100 @@ footer { margin-top: 2.5rem; text-align: center; font-size: 0.75rem; letter-spac
     </div>
   </header>
 
-  <section class="card">
-    <div class="card-head">
-      <img src="raven.png" alt="Raven icon" style="width: 28px; height: 28px;" />
-      <h2 class="card-title">Log a Sighting</h2>
-    </div>
-    <p class="card-sub">Record what you saw</p>
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="log">Log</button>
+    <button class="tab-btn" data-tab="view">Entries</button>
+  </div>
 
-    <form id="sighting-form">
-      <div>
-        <label for="birdType" class="field-label">Bird Type</label>
-        <select id="birdType" class="field-input" required>
-          <option value="" disabled selected>Select a species</option>
-          <option>Crow</option><option>Jay</option><option>Robin</option><option>Raven</option><option>Other</option>
-        </select>
+  <!-- LOG TAB -->
+  <div id="log-tab" class="tab-content active">
+    <section class="card">
+      <div class="card-head">
+        <img src="raven.png" alt="Raven icon" style="width: 28px; height: 28px;" />
+        <h2 class="card-title">Log a Sighting</h2>
       </div>
-      <div>
-        <label for="individualName" class="field-label">Individual Name <span class="opt">(optional)</span></label>
-        <input id="individualName" type="text" class="field-input" placeholder="e.g. Dranzer" />
-      </div>
-      <div>
-        <label for="behavior" class="field-label">Behavior / Notes</label>
-        <textarea id="behavior" class="field-input" placeholder="What was the bird doing?"></textarea>
-      </div>
-      <div class="grid-2">
+      <p class="card-sub">Record what you saw</p>
+
+      <form id="sighting-form">
         <div>
-          <label for="date" class="field-label">Date</label>
-          <input id="date" type="date" class="field-input" required />
-        </div>
-        <div>
-          <label for="timeOfDay" class="field-label">Time of Day</label>
-          <select id="timeOfDay" class="field-input" required>
-            <option value="" disabled selected>Select…</option>
-            <option>Dawn (5am–7am)</option>
-            <option>Morning (7am–12pm)</option>
-            <option>Midday (12pm–1pm)</option>
-            <option>Afternoon (1pm–5pm)</option>
-            <option>Evening (5pm–8pm)</option>
-            <option>Dusk (8pm–9:30pm)</option>
-            <option>Night (9:30pm–5am)</option>
+          <label for="birdType" class="field-label">Bird Type</label>
+          <select id="birdType" class="field-input" required>
+            <option value="" disabled selected>Select a species</option>
+            <option>Crow</option><option>Jay</option><option>Robin</option><option>Raven</option><option>Other</option>
           </select>
         </div>
-      </div>
-      <div>
-        <label for="weather" class="field-label">Weather</label>
-        <select id="weather" class="field-input" required>
-          <option value="" disabled selected>Select conditions</option>
-          <option>Sunny</option><option>Cloudy</option><option>Rainy</option>
-          <option>Overcast</option><option>Partly Cloudy</option><option>Snowy</option>
-        </select>
-      </div>
-      <div>
-        <label for="surroundings" class="field-label">Surrounding Conditions</label>
-        <textarea id="surroundings" class="field-input" placeholder="Habitat, location, ambience…"></textarea>
-      </div>
-      <div>
-        <label for="photoUrl" class="field-label label-row">
-          <span>Photo URL</span><span class="badge-soon">Coming in v2</span>
-        </label>
-        <input id="photoUrl" type="url" class="field-input" placeholder="https://…" disabled />
-      </div>
+        <div>
+          <label for="individualName" class="field-label">Individual Name <span class="opt">(optional)</span></label>
+          <input id="individualName" type="text" class="field-input" placeholder="e.g. Dranzer" />
+        </div>
+        <div>
+          <label for="behavior" class="field-label">Behavior / Notes</label>
+          <textarea id="behavior" class="field-input" placeholder="What was the bird doing?"></textarea>
+        </div>
+        <div class="grid-2">
+          <div>
+            <label for="date" class="field-label">Date</label>
+            <input id="date" type="date" class="field-input" required />
+          </div>
+          <div>
+            <label for="timeOfDay" class="field-label">Time of Day</label>
+            <select id="timeOfDay" class="field-input" required>
+              <option value="" disabled selected>Select…</option>
+              <option>Dawn (5am–7am)</option>
+              <option>Morning (7am–12pm)</option>
+              <option>Midday (12pm–1pm)</option>
+              <option>Afternoon (1pm–5pm)</option>
+              <option>Evening (5pm–8pm)</option>
+              <option>Dusk (8pm–9:30pm)</option>
+              <option>Night (9:30pm–5am)</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label for="weather" class="field-label">Weather</label>
+          <select id="weather" class="field-input" required>
+            <option value="" disabled selected>Select conditions</option>
+            <option>Sunny</option><option>Cloudy</option><option>Rainy</option>
+            <option>Overcast</option><option>Partly Cloudy</option><option>Snowy</option>
+          </select>
+        </div>
+        <div>
+          <label for="surroundings" class="field-label">Surrounding Conditions</label>
+          <textarea id="surroundings" class="field-input" placeholder="Habitat, location, ambience…"></textarea>
+        </div>
+        <div>
+          <label for="photoUrl" class="field-label label-row">
+            <span>Photo URL</span><span class="badge-soon">Coming in v2</span>
+          </label>
+          <input id="photoUrl" type="url" class="field-input" placeholder="https://…" disabled />
+        </div>
 
-      <hr class="ornament full" />
+        <hr class="ornament full" />
 
-      <div id="submitStatus" class="status-msg"></div>
+        <div id="submitStatus" class="status-msg"></div>
 
-      <div class="actions">
-        <button type="reset" class="btn-ghost">Clear</button>
-        <button type="submit" class="btn-primary" id="submitBtn">Log Sighting</button>
+        <div class="actions">
+          <button type="reset" class="btn-ghost">Clear</button>
+          <button type="submit" class="btn-primary" id="submitBtn">Log Sighting</button>
+        </div>
+        <p class="confirmation" id="confirmation">Sighting recorded in your ledger.</p>
+      </form>
+    </section>
+  </div>
+
+  <!-- VIEW ENTRIES TAB -->
+  <div id="view-tab" class="tab-content">
+    <section class="card">
+      <div class="card-head">
+        <img src="raven.png" alt="Raven icon" style="width: 28px; height: 28px;" />
+        <h2 class="card-title">Your Sightings</h2>
       </div>
-      <p class="confirmation" id="confirmation">Sighting recorded in your ledger.</p>
-    </form>
-  </section>
+      <p class="card-sub">Browse your logged entries</p>
+
+      <div id="viewStatus" class="status-msg"></div>
+      <div id="entries-container" class="entries-list"></div>
+    </section>
+  </div>
 
   <footer>Raven&rsquo;s Eye v1.0 &nbsp;|&nbsp; Mobile-first bird watching</footer>
 </main>
@@ -284,6 +343,26 @@ footer { margin-top: 2.5rem; text-align: center; font-size: 0.75rem; letter-spac
 const GITHUB_OWNER = 'atucker2325';
 const GITHUB_REPO = 'bird-watcher';
 const ENTRIES_FILE = 'sightings.json';
+
+// Tab switching
+const tabBtns = document.querySelectorAll('.tab-btn');
+const tabContents = document.querySelectorAll('.tab-content');
+
+tabBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const tabName = btn.dataset.tab;
+
+    tabBtns.forEach(b => b.classList.remove('active'));
+    tabContents.forEach(c => c.classList.remove('active'));
+
+    btn.classList.add('active');
+    document.getElementById(`${tabName}-tab`).classList.add('active');
+
+    if (tabName === 'view') {
+      loadEntries();
+    }
+  });
+});
 
 // Settings modal
 const settingsBtn = document.getElementById('settingsBtn');
@@ -350,7 +429,6 @@ form.addEventListener('submit', async (e) => {
   showSubmitStatus('Saving to GitHub...', 'loading');
 
   try {
-    // Collect form data
     const entry = {
       birdType: document.getElementById('birdType').value,
       individualName: document.getElementById('individualName').value,
@@ -362,7 +440,6 @@ form.addEventListener('submit', async (e) => {
       timestamp: new Date().toISOString()
     };
 
-    // Save to GitHub
     await saveToGitHub(token, entry);
 
     showSubmitStatus('', '');
@@ -378,7 +455,6 @@ form.addEventListener('submit', async (e) => {
 });
 
 async function saveToGitHub(token, newEntry) {
-  // Get current file
   let entries = [];
   let sha = null;
 
@@ -404,10 +480,8 @@ async function saveToGitHub(token, newEntry) {
     if (!error.message.includes('404')) throw error;
   }
 
-  // Add new entry
   entries.push(newEntry);
 
-  // Upload to GitHub
   const content = btoa(JSON.stringify(entries, null, 2));
   const message = `Log sighting: ${newEntry.birdType} on ${newEntry.date}`;
 
@@ -442,7 +516,87 @@ function showSubmitStatus(msg, type) {
   submitStatus.className = `status-msg show ${type}`;
 }
 
-// Initialize on page load
+// Load and display entries
+async function loadEntries() {
+  const container = document.getElementById('entries-container');
+  const viewStatus = document.getElementById('viewStatus');
+  const token = localStorage.getItem('github_token');
+
+  if (!token) {
+    container.innerHTML = '<div class="empty-state">Set your GitHub token in Settings to view entries</div>';
+    return;
+  }
+
+  container.innerHTML = '';
+  viewStatus.textContent = 'Loading entries...';
+  viewStatus.className = 'status-msg show loading';
+
+  try {
+    const resp = await fetch(
+      `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${ENTRIES_FILE}`,
+      {
+        headers: {
+          'Authorization': `token ${token}`,
+          'Accept': 'application/vnd.github.v3+json'
+        }
+      }
+    );
+
+    let entries = [];
+    if (resp.ok) {
+      const data = await resp.json();
+      entries = JSON.parse(atob(data.content));
+    } else if (resp.status === 404) {
+      entries = [];
+    } else {
+      throw new Error(`GitHub API error: ${resp.status}`);
+    }
+
+    viewStatus.classList.remove('show');
+
+    if (entries.length === 0) {
+      container.innerHTML = '<div class="empty-state">No sightings logged yet. Start logging to see them here!</div>';
+      return;
+    }
+
+    entries.reverse();
+
+    entries.forEach((entry, index) => {
+      const entryEl = document.createElement('div');
+      entryEl.className = 'entry-item';
+
+      const dateObj = new Date(entry.timestamp);
+      const formattedDate = dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
+      entryEl.innerHTML = `
+        <div class="entry-header">
+          <div>
+            <div class="entry-bird">${entry.birdType}</div>
+            <div class="entry-date">${formattedDate}</div>
+            <div class="entry-time">${entry.timeOfDay}</div>
+            ${entry.individualName ? `<div class="entry-individual">🎭 ${entry.individualName}</div>` : ''}
+          </div>
+        </div>
+        <div class="entry-details" id="details-${index}">
+          ${entry.behavior ? `<div class="entry-field"><div class="entry-field-label">Behavior</div><div class="entry-field-value">${entry.behavior}</div></div>` : ''}
+          ${entry.weather ? `<div class="entry-field"><div class="entry-field-label">Weather</div><div class="entry-field-value">${entry.weather}</div></div>` : ''}
+          ${entry.surroundings ? `<div class="entry-field"><div class="entry-field-label">Conditions</div><div class="entry-field-value">${entry.surroundings}</div></div>` : ''}
+        </div>
+      `;
+
+      entryEl.addEventListener('click', () => {
+        const details = document.getElementById(`details-${index}`);
+        details.classList.toggle('show');
+      });
+
+      container.appendChild(entryEl);
+    });
+  } catch (error) {
+    viewStatus.textContent = `Error: ${error.message}`;
+    viewStatus.className = 'status-msg show error';
+  }
+}
+
 document.addEventListener('DOMContentLoaded', initializeDateField);
 </script>
 </body>
