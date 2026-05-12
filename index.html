@@ -68,20 +68,17 @@ main { max-width: 42rem; margin: 0 auto; padding: 2.5rem 1.25rem; }
 
 .modal-overlay {
   display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0, 0, 0, 0.5); z-index: 999;
+  background: rgba(0, 0, 0, 0.5); z-index: 999; overflow-y: auto;
 }
 .modal-overlay.show { display: block; }
 .modal {
-  display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  display: none; position: relative; margin: 2rem auto;
   background: var(--card); border: 1px solid var(--border); border-radius: calc(var(--radius) + 6px);
-  padding: 2rem; max-width: 90%; width: 100%; max-height: 90vh; overflow-y: auto;
-  z-index: 1000; box-shadow: var(--shadow-elegant);
+  padding: 2rem; max-width: 90%; width: 100%; z-index: 1000; box-shadow: var(--shadow-elegant);
 }
 .modal.show { display: block; }
 .modal-close { position: absolute; top: 1rem; right: 1rem; background: none; border: none; color: var(--primary); font-size: 1.5rem; cursor: pointer; }
 .modal h2 { margin-bottom: 1.5rem; }
-.modal-body { display: flex; flex-direction: column; gap: 1rem; }
-.token-input { font-family: monospace; font-size: 0.85rem; }
 
 .tabs {
   display: flex; gap: 0.5rem; margin-top: 2.5rem; border-bottom: 1px solid var(--border); padding-bottom: 1rem;
@@ -162,7 +159,7 @@ select.field-input option { background: oklch(0.18 0.014 285); color: var(--fore
 .actions { display: flex; flex-direction: column-reverse; gap: 0.75rem; }
 @media (min-width: 640px) { .actions { flex-direction: row; justify-content: flex-end; } }
 
-.btn-primary, .btn-ghost {
+.btn-primary, .btn-ghost, .btn-small {
   font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
   font-size: 0.78rem; padding: 0.85rem 1.6rem; border-radius: var(--radius);
   cursor: pointer; transition: all 0.2s ease; font-family: var(--font-body);
@@ -179,16 +176,30 @@ select.field-input option { background: oklch(0.18 0.014 285); color: var(--fore
   border: 1px solid var(--border); font-weight: 500;
 }
 .btn-ghost:hover { color: var(--primary); border-color: var(--primary); }
+.btn-small {
+  padding: 0.4rem 0.8rem; font-size: 0.7rem; background: transparent; border: 1px solid var(--border);
+  color: var(--muted-foreground);
+}
+.btn-small:hover { color: var(--primary); border-color: var(--primary); }
 
 .confirmation { text-align: center; font-size: 0.875rem; font-style: italic; color: var(--primary); display: none; }
 .confirmation.show { display: block; }
-.confirmation.error { color: oklch(0.72 0.155 20); }
-
 .status-msg { font-size: 0.85rem; padding: 0.75rem; border-radius: var(--radius); display: none; }
 .status-msg.show { display: block; }
 .status-msg.success { background: oklch(0.35 0.08 120 / 0.15); color: oklch(0.72 0.155 120); border: 1px solid oklch(0.72 0.155 120 / 0.3); }
 .status-msg.error { background: oklch(0.35 0.08 20 / 0.15); color: oklch(0.72 0.155 20); border: 1px solid oklch(0.72 0.155 20 / 0.3); }
 .status-msg.loading { background: oklch(0.35 0.08 75 / 0.15); color: oklch(0.72 0.155 75); border: 1px solid oklch(0.72 0.155 75 / 0.3); }
+
+.stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
+@media (min-width: 640px) { .stats-grid { grid-template-columns: repeat(4, 1fr); } }
+.stat-card { background: var(--input); padding: 1rem; border-radius: var(--radius); border: 1px solid var(--border); text-align: center; }
+.stat-number { font-size: 1.75rem; font-weight: bold; color: var(--primary); }
+.stat-label { font-size: 0.75rem; color: var(--muted-foreground); margin-top: 0.25rem; text-transform: uppercase; }
+
+.view-toolbar { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 1.5rem; }
+.toolbar-row { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+.search-input { flex: 1; min-width: 200px; }
+.view-controls { display: flex; gap: 0.5rem; flex-wrap: wrap; }
 
 .entries-list { display: flex; flex-direction: column; gap: 1.25rem; }
 .entry-item {
@@ -196,18 +207,22 @@ select.field-input option { background: oklch(0.18 0.014 285); color: var(--fore
   border-radius: var(--radius); cursor: pointer; transition: all 0.2s ease;
 }
 .entry-item:hover { border-color: var(--primary); background: oklch(0.24 0.018 285); }
+.entry-item.favorite { border-color: var(--primary); background: oklch(0.24 0.018 285); }
 .entry-header { display: flex; justify-content: space-between; align-items: start; }
-.entry-bird { font-weight: 600; font-size: 1rem; }
+.entry-bird { font-weight: 600; font-size: 1rem; cursor: pointer; }
+.entry-bird:hover { color: var(--primary); }
 .entry-date { font-size: 0.85rem; color: var(--muted-foreground); }
 .entry-time { font-size: 0.8rem; color: var(--muted-foreground); margin-top: 0.25rem; }
 .entry-individual { color: var(--primary); font-style: italic; margin-top: 0.5rem; }
+.entry-actions { display: flex; gap: 0.5rem; }
 .entry-details { display: none; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border); }
 .entry-details.show { display: block; }
 .entry-field { margin-bottom: 0.75rem; }
 .entry-field-label { font-weight: 500; font-size: 0.8rem; color: var(--muted-foreground); text-transform: uppercase; }
 .entry-field-value { margin-top: 0.25rem; color: var(--foreground); }
-
 .empty-state { text-align: center; padding: 2rem; color: var(--muted-foreground); }
+.back-link { color: var(--primary); cursor: pointer; font-size: 0.9rem; margin-bottom: 1rem; }
+.back-link:hover { text-decoration: underline; }
 
 footer { margin-top: 2.5rem; text-align: center; font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; color: oklch(0.62 0.018 80 / 0.7); }
 </style>
@@ -217,17 +232,67 @@ footer { margin-top: 2.5rem; text-align: center; font-size: 0.75rem; letter-spac
 <div class="modal" id="settingsModal">
   <button class="modal-close" id="modalClose">&times;</button>
   <h2>Settings</h2>
-  <div class="modal-body">
+  <div style="display: flex; flex-direction: column; gap: 1rem;">
     <div>
       <label for="githubToken" class="field-label">GitHub Personal Access Token</label>
       <p style="font-size: 0.85rem; color: var(--muted-foreground); margin: 0.5rem 0;">
         Paste your fine-grained token here. It's stored locally on this device only.
       </p>
-      <input type="password" id="githubToken" class="field-input token-input" placeholder="github_pat_..." />
+      <input type="password" id="githubToken" class="field-input" placeholder="github_pat_..." />
       <button class="btn-primary" id="saveTokenBtn" style="margin-top: 1rem;">Save Token</button>
       <div id="tokenStatus" class="status-msg"></div>
     </div>
   </div>
+</div>
+
+<div class="modal-overlay" id="editOverlay"></div>
+<div class="modal" id="editModal">
+  <button class="modal-close" id="editClose">&times;</button>
+  <h2>Edit Sighting</h2>
+  <form id="edit-form" style="display: flex; flex-direction: column; gap: 1.5rem;">
+    <div>
+      <label for="edit-birdType" class="field-label">Bird Type</label>
+      <select id="edit-birdType" class="field-input" required>
+        <option>Crow</option><option>Jay</option><option>Robin</option><option>Raven</option><option>Other</option>
+      </select>
+    </div>
+    <div>
+      <label for="edit-individualName" class="field-label">Individual Name</label>
+      <input id="edit-individualName" type="text" class="field-input" placeholder="e.g. Dranzer" />
+    </div>
+    <div>
+      <label for="edit-behavior" class="field-label">Behavior / Notes</label>
+      <textarea id="edit-behavior" class="field-input"></textarea>
+    </div>
+    <div class="grid-2">
+      <div>
+        <label for="edit-date" class="field-label">Date</label>
+        <input id="edit-date" type="date" class="field-input" required />
+      </div>
+      <div>
+        <label for="edit-timeOfDay" class="field-label">Time of Day</label>
+        <select id="edit-timeOfDay" class="field-input" required>
+          <option>Dawn (5am–7am)</option><option>Morning (7am–12pm)</option><option>Midday (12pm–1pm)</option>
+          <option>Afternoon (1pm–5pm)</option><option>Evening (5pm–8pm)</option><option>Dusk (8pm–9:30pm)</option><option>Night (9:30pm–5am)</option>
+        </select>
+      </div>
+    </div>
+    <div>
+      <label for="edit-weather" class="field-label">Weather</label>
+      <select id="edit-weather" class="field-input" required>
+        <option>Sunny</option><option>Cloudy</option><option>Rainy</option>
+        <option>Overcast</option><option>Partly Cloudy</option><option>Snowy</option>
+      </select>
+    </div>
+    <div>
+      <label for="edit-surroundings" class="field-label">Surrounding Conditions</label>
+      <textarea id="edit-surroundings" class="field-input"></textarea>
+    </div>
+    <div style="display: flex; gap: 0.75rem;">
+      <button type="submit" class="btn-primary">Save Changes</button>
+      <button type="button" class="btn-ghost" id="editCancel">Cancel</button>
+    </div>
+  </form>
 </div>
 
 <main>
@@ -329,9 +394,53 @@ footer { margin-top: 2.5rem; text-align: center; font-size: 0.75rem; letter-spac
         <img src="raven.png" alt="Raven icon" style="width: 28px; height: 28px;" />
         <h2 class="card-title">Your Sightings</h2>
       </div>
-      <p class="card-sub">Browse your logged entries</p>
+      <p class="card-sub">Browse, filter, and manage your entries</p>
+
+      <div id="statsSection" style="display: none;">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-number" id="statTotal">0</div>
+            <div class="stat-label">Total Sightings</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="statCommon">—</div>
+            <div class="stat-label">Most Frequent</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="statSpecies">0</div>
+            <div class="stat-label">Unique Species</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="statNamed">0</div>
+            <div class="stat-label">Named Birds</div>
+          </div>
+        </div>
+      </div>
 
       <div id="viewStatus" class="status-msg"></div>
+
+      <div class="view-toolbar" id="toolbar" style="display: none;">
+        <div class="toolbar-row">
+          <input type="text" id="searchInput" class="field-input search-input" placeholder="Search by bird, name, behavior, location…" />
+        </div>
+        <div class="toolbar-row">
+          <select id="filterBird" class="field-input" style="flex: 1; min-width: 120px;">
+            <option value="">All Birds</option>
+          </select>
+          <select id="sortBy" class="field-input" style="flex: 1; min-width: 100px;">
+            <option value="date-desc">Newest First</option>
+            <option value="date-asc">Oldest First</option>
+            <option value="bird-asc">Bird (A-Z)</option>
+          </select>
+          <button class="btn-small" id="exportBtn">Export</button>
+        </div>
+      </div>
+
+      <div id="birdProfileHeader" style="display: none; margin-bottom: 1rem;">
+        <span class="back-link" id="backLink">← Back to All</span>
+        <h3 style="margin-top: 0.5rem; font-size: 1.25rem;"><span id="profileBirdName"></span> Sightings</h3>
+      </div>
+
       <div id="entries-container" class="entries-list"></div>
     </section>
   </div>
@@ -344,6 +453,10 @@ const GITHUB_OWNER = 'atucker2325';
 const GITHUB_REPO = 'bird-watcher';
 const ENTRIES_FILE = 'sightings.json';
 
+let allEntries = [];
+let filteredEntries = [];
+let viewingProfile = null;
+
 // Tab switching
 const tabBtns = document.querySelectorAll('.tab-btn');
 const tabContents = document.querySelectorAll('.tab-content');
@@ -351,20 +464,15 @@ const tabContents = document.querySelectorAll('.tab-content');
 tabBtns.forEach(btn => {
   btn.addEventListener('click', () => {
     const tabName = btn.dataset.tab;
-
     tabBtns.forEach(b => b.classList.remove('active'));
     tabContents.forEach(c => c.classList.remove('active'));
-
     btn.classList.add('active');
     document.getElementById(`${tabName}-tab`).classList.add('active');
-
-    if (tabName === 'view') {
-      loadEntries();
-    }
+    if (tabName === 'view') loadEntries();
   });
 });
 
-// Settings modal
+// Settings
 const settingsBtn = document.getElementById('settingsBtn');
 const settingsModal = document.getElementById('settingsModal');
 const settingsOverlay = document.getElementById('settingsOverlay');
@@ -380,7 +488,9 @@ settingsBtn.addEventListener('click', () => {
 });
 
 modalClose.addEventListener('click', closeModal);
-settingsOverlay.addEventListener('click', closeModal);
+settingsOverlay.addEventListener('click', (e) => {
+  if (e.target === settingsOverlay) closeModal();
+});
 
 function closeModal() {
   settingsOverlay.classList.remove('show');
@@ -403,6 +513,67 @@ function showTokenStatus(msg, type) {
   tokenStatus.textContent = msg;
   tokenStatus.className = `status-msg show ${type}`;
 }
+
+// Edit modal
+const editOverlay = document.getElementById('editOverlay');
+const editModal = document.getElementById('editModal');
+const editClose = document.getElementById('editClose');
+const editCancel = document.getElementById('editCancel');
+const editForm = document.getElementById('edit-form');
+let editingIndex = null;
+
+editClose.addEventListener('click', closeEditModal);
+editCancel.addEventListener('click', closeEditModal);
+editOverlay.addEventListener('click', (e) => {
+  if (e.target === editOverlay) closeEditModal();
+});
+
+function closeEditModal() {
+  editOverlay.classList.remove('show');
+  editModal.classList.remove('show');
+  editingIndex = null;
+}
+
+function openEditModal(index) {
+  const entry = allEntries[index];
+  editingIndex = index;
+
+  document.getElementById('edit-birdType').value = entry.birdType;
+  document.getElementById('edit-individualName').value = entry.individualName || '';
+  document.getElementById('edit-behavior').value = entry.behavior || '';
+  document.getElementById('edit-date').value = entry.date;
+  document.getElementById('edit-timeOfDay').value = entry.timeOfDay;
+  document.getElementById('edit-weather').value = entry.weather;
+  document.getElementById('edit-surroundings').value = entry.surroundings || '';
+
+  editOverlay.classList.add('show');
+  editModal.classList.add('show');
+}
+
+editForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const token = localStorage.getItem('github_token');
+  if (!token) {
+    alert('Please set your GitHub token in Settings');
+    return;
+  }
+
+  allEntries[editingIndex] = {
+    ...allEntries[editingIndex],
+    birdType: document.getElementById('edit-birdType').value,
+    individualName: document.getElementById('edit-individualName').value,
+    behavior: document.getElementById('edit-behavior').value,
+    date: document.getElementById('edit-date').value,
+    timeOfDay: document.getElementById('edit-timeOfDay').value,
+    weather: document.getElementById('edit-weather').value,
+    surroundings: document.getElementById('edit-surroundings').value,
+  };
+
+  await saveAllToGitHub(token);
+  closeEditModal();
+  displayEntries();
+});
 
 // Initialize date field
 function initializeDateField() {
@@ -437,10 +608,12 @@ form.addEventListener('submit', async (e) => {
       timeOfDay: document.getElementById('timeOfDay').value,
       weather: document.getElementById('weather').value,
       surroundings: document.getElementById('surroundings').value,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
+      favorite: false
     };
 
-    await saveToGitHub(token, entry);
+    allEntries.push(entry);
+    await saveAllToGitHub(token);
 
     showSubmitStatus('', '');
     confirmation.classList.add('show');
@@ -449,6 +622,7 @@ form.addEventListener('submit', async (e) => {
     setTimeout(() => confirmation.classList.remove('show'), 3000);
   } catch (error) {
     showSubmitStatus(`Error: ${error.message}`, 'error');
+    allEntries.pop();
   } finally {
     submitBtn.disabled = false;
   }
@@ -458,8 +632,7 @@ function encodeBase64(str) {
   return btoa(unescape(encodeURIComponent(str)));
 }
 
-async function saveToGitHub(token, newEntry) {
-  let entries = [];
+async function saveAllToGitHub(token) {
   let sha = null;
 
   try {
@@ -476,18 +649,11 @@ async function saveToGitHub(token, newEntry) {
     if (getResp.ok) {
       const data = await getResp.json();
       sha = data.sha;
-      entries = JSON.parse(decodeURIComponent(escape(atob(data.content))));
-    } else if (getResp.status !== 404) {
-      throw new Error(`GitHub API error: ${getResp.status}`);
     }
-  } catch (error) {
-    if (!error.message.includes('404')) throw error;
-  }
+  } catch (error) {}
 
-  entries.push(newEntry);
-
-  const content = encodeBase64(JSON.stringify(entries, null, 2));
-  const message = `Log sighting: ${newEntry.birdType} on ${newEntry.date}`;
+  const content = encodeBase64(JSON.stringify(allEntries, null, 2));
+  const message = `Update sightings log (${new Date().toISOString()})`;
 
   const putResp = await fetch(
     `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${ENTRIES_FILE}`,
@@ -520,7 +686,7 @@ function showSubmitStatus(msg, type) {
   submitStatus.className = `status-msg show ${type}`;
 }
 
-// Load and display entries
+// Load entries
 async function loadEntries() {
   const container = document.getElementById('entries-container');
   const viewStatus = document.getElementById('viewStatus');
@@ -528,6 +694,8 @@ async function loadEntries() {
 
   if (!token) {
     container.innerHTML = '<div class="empty-state">Set your GitHub token in Settings to view entries</div>';
+    document.getElementById('toolbar').style.display = 'none';
+    document.getElementById('statsSection').style.display = 'none';
     return;
   }
 
@@ -546,60 +714,211 @@ async function loadEntries() {
       }
     );
 
-    let entries = [];
     if (resp.ok) {
       const data = await resp.json();
-      entries = JSON.parse(decodeURIComponent(escape(atob(data.content))));
+      allEntries = JSON.parse(decodeURIComponent(escape(atob(data.content))));
     } else if (resp.status === 404) {
-      entries = [];
+      allEntries = [];
     } else {
       throw new Error(`GitHub API error: ${resp.status}`);
     }
 
     viewStatus.classList.remove('show');
+    document.getElementById('toolbar').style.display = 'block';
+    document.getElementById('statsSection').style.display = 'block';
 
-    if (entries.length === 0) {
-      container.innerHTML = '<div class="empty-state">No sightings logged yet. Start logging to see them here!</div>';
-      return;
-    }
-
-    entries.reverse();
-
-    entries.forEach((entry, index) => {
-      const entryEl = document.createElement('div');
-      entryEl.className = 'entry-item';
-
-      const dateObj = new Date(entry.timestamp);
-      const formattedDate = dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-
-      entryEl.innerHTML = `
-        <div class="entry-header">
-          <div>
-            <div class="entry-bird">${entry.birdType}</div>
-            <div class="entry-date">${formattedDate}</div>
-            <div class="entry-time">${entry.timeOfDay}</div>
-            ${entry.individualName ? `<div class="entry-individual">🎭 ${entry.individualName}</div>` : ''}
-          </div>
-        </div>
-        <div class="entry-details" id="details-${index}">
-          ${entry.behavior ? `<div class="entry-field"><div class="entry-field-label">Behavior</div><div class="entry-field-value">${entry.behavior}</div></div>` : ''}
-          ${entry.weather ? `<div class="entry-field"><div class="entry-field-label">Weather</div><div class="entry-field-value">${entry.weather}</div></div>` : ''}
-          ${entry.surroundings ? `<div class="entry-field"><div class="entry-field-label">Conditions</div><div class="entry-field-value">${entry.surroundings}</div></div>` : ''}
-        </div>
-      `;
-
-      entryEl.addEventListener('click', () => {
-        const details = document.getElementById(`details-${index}`);
-        details.classList.toggle('show');
-      });
-
-      container.appendChild(entryEl);
-    });
+    setupFilters();
+    updateStats();
+    applyFiltersAndSort();
   } catch (error) {
     viewStatus.textContent = `Error: ${error.message}`;
     viewStatus.className = 'status-msg show error';
   }
 }
+
+function setupFilters() {
+  const birdSelect = document.getElementById('filterBird');
+  const uniqueBirds = [...new Set(allEntries.map(e => e.birdType))].sort();
+
+  birdSelect.innerHTML = '<option value="">All Birds</option>';
+  uniqueBirds.forEach(bird => {
+    birdSelect.innerHTML += `<option value="${bird}">${bird}</option>`;
+  });
+}
+
+function updateStats() {
+  const total = allEntries.length;
+  const birds = allEntries.map(e => e.birdType);
+  const birdCounts = {};
+  birds.forEach(b => birdCounts[b] = (birdCounts[b] || 0) + 1);
+  const mostCommon = Object.keys(birdCounts).length > 0 ?
+    Object.entries(birdCounts).sort((a, b) => b[1] - a[1])[0][0] : '—';
+  const uniqueBirds = new Set(birds).size;
+  const named = allEntries.filter(e => e.individualName).length;
+
+  document.getElementById('statTotal').textContent = total;
+  document.getElementById('statCommon').textContent = mostCommon;
+  document.getElementById('statSpecies').textContent = uniqueBirds;
+  document.getElementById('statNamed').textContent = named;
+}
+
+function applyFiltersAndSort() {
+  const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+  const filterBird = document.getElementById('filterBird').value;
+  const sortBy = document.getElementById('sortBy').value;
+
+  filteredEntries = allEntries.filter(entry => {
+    const matchesBird = !filterBird || entry.birdType === filterBird;
+    const matchesSearch = !searchTerm ||
+      entry.birdType.toLowerCase().includes(searchTerm) ||
+      (entry.individualName && entry.individualName.toLowerCase().includes(searchTerm)) ||
+      (entry.behavior && entry.behavior.toLowerCase().includes(searchTerm)) ||
+      (entry.surroundings && entry.surroundings.toLowerCase().includes(searchTerm));
+    return matchesBird && matchesSearch;
+  });
+
+  if (sortBy === 'date-desc') {
+    filteredEntries.reverse();
+  } else if (sortBy === 'date-asc') {
+    filteredEntries.sort((a, b) => new Date(a.date) - new Date(b.date));
+  } else if (sortBy === 'bird-asc') {
+    filteredEntries.sort((a, b) => a.birdType.localeCompare(b.birdType));
+  }
+
+  displayEntries();
+}
+
+function displayEntries() {
+  const container = document.getElementById('entries-container');
+
+  if (viewingProfile) {
+    const profileEntries = filteredEntries.filter(e => e.birdType === viewingProfile);
+    displayProfileView(profileEntries);
+    return;
+  }
+
+  if (filteredEntries.length === 0) {
+    container.innerHTML = '<div class="empty-state">No sightings found.</div>';
+    return;
+  }
+
+  container.innerHTML = '';
+  filteredEntries.forEach((entry, displayIndex) => {
+    const actualIndex = allEntries.indexOf(entry);
+    const entryEl = document.createElement('div');
+    entryEl.className = `entry-item${entry.favorite ? ' favorite' : ''}`;
+
+    const dateObj = new Date(entry.timestamp);
+    const formattedDate = dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
+    entryEl.innerHTML = `
+      <div class="entry-header">
+        <div>
+          <div class="entry-bird">${entry.birdType}</div>
+          <div class="entry-date">${formattedDate}</div>
+          <div class="entry-time">${entry.timeOfDay}</div>
+          ${entry.individualName ? `<div class="entry-individual">🎭 ${entry.individualName}</div>` : ''}
+        </div>
+        <div class="entry-actions">
+          <button class="btn-small" data-favorite="${actualIndex}" title="Favorite">⭐</button>
+          <button class="btn-small" data-edit="${actualIndex}" title="Edit">✏️</button>
+          <button class="btn-small" data-delete="${actualIndex}" title="Delete">🗑️</button>
+        </div>
+      </div>
+      <div class="entry-details" id="details-${displayIndex}">
+        ${entry.behavior ? `<div class="entry-field"><div class="entry-field-label">Behavior</div><div class="entry-field-value">${entry.behavior}</div></div>` : ''}
+        ${entry.weather ? `<div class="entry-field"><div class="entry-field-label">Weather</div><div class="entry-field-value">${entry.weather}</div></div>` : ''}
+        ${entry.surroundings ? `<div class="entry-field"><div class="entry-field-label">Conditions</div><div class="entry-field-value">${entry.surroundings}</div></div>` : ''}
+      </div>
+    `;
+
+    entryEl.querySelector('.entry-bird').addEventListener('click', () => viewBirdProfile(entry.birdType));
+
+    entryEl.addEventListener('click', (e) => {
+      if (!e.target.closest('button')) {
+        const details = document.getElementById(`details-${displayIndex}`);
+        details.classList.toggle('show');
+      }
+    });
+
+    entryEl.querySelector(`[data-favorite="${actualIndex}"]`).addEventListener('click', async (e) => {
+      e.stopPropagation();
+      const token = localStorage.getItem('github_token');
+      if (!token) return;
+      allEntries[actualIndex].favorite = !allEntries[actualIndex].favorite;
+      await saveAllToGitHub(token);
+      displayEntries();
+    });
+
+    entryEl.querySelector(`[data-edit="${actualIndex}"]`).addEventListener('click', (e) => {
+      e.stopPropagation();
+      openEditModal(actualIndex);
+    });
+
+    entryEl.querySelector(`[data-delete="${actualIndex}"]`).addEventListener('click', async (e) => {
+      e.stopPropagation();
+      if (!confirm('Delete this sighting?')) return;
+      const token = localStorage.getItem('github_token');
+      if (!token) return;
+      allEntries.splice(actualIndex, 1);
+      await saveAllToGitHub(token);
+      applyFiltersAndSort();
+    });
+
+    container.appendChild(entryEl);
+  });
+}
+
+function viewBirdProfile(birdType) {
+  viewingProfile = birdType;
+  document.getElementById('birdProfileHeader').style.display = 'block';
+  document.getElementById('profileBirdName').textContent = birdType;
+  applyFiltersAndSort();
+}
+
+document.getElementById('backLink').addEventListener('click', () => {
+  viewingProfile = null;
+  document.getElementById('birdProfileHeader').style.display = 'none';
+  applyFiltersAndSort();
+});
+
+document.getElementById('searchInput').addEventListener('input', applyFiltersAndSort);
+document.getElementById('filterBird').addEventListener('change', applyFiltersAndSort);
+document.getElementById('sortBy').addEventListener('change', applyFiltersAndSort);
+
+document.getElementById('exportBtn').addEventListener('click', () => {
+  if (allEntries.length === 0) {
+    alert('No entries to export');
+    return;
+  }
+
+  const csv = [
+    ['Date', 'Bird Type', 'Individual Name', 'Time of Day', 'Weather', 'Behavior', 'Conditions'],
+    ...allEntries.map(e => [
+      e.date,
+      e.birdType,
+      e.individualName || '',
+      e.timeOfDay,
+      e.weather,
+      e.behavior || '',
+      e.surroundings || ''
+    ])
+  ].map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')).join('\n');
+
+  const json = JSON.stringify(allEntries, null, 2);
+
+  const menu = confirm('Export as CSV (OK) or JSON (Cancel)?');
+  const data = menu ? csv : json;
+  const filename = `raven-entries-${new Date().toISOString().split('T')[0]}.${menu ? 'csv' : 'json'}`;
+
+  const blob = new Blob([data], { type: 'text/plain' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+});
 
 document.addEventListener('DOMContentLoaded', initializeDateField);
 </script>
