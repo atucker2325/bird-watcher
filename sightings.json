@@ -19,5 +19,16 @@
     "weather": "Sunny",
     "surroundings": "Backyard, calm, quiet, no people or animals around.",
     "timestamp": "2026-05-12T14:22:15.480Z"
+  },
+  {
+    "birdType": "Jay",
+    "individualName": "",
+    "behavior": "Perching on the bird bath. It was looking at the feeder with interest, but the feeder was actively being guarded by a robin.",
+    "date": "2026-05-12",
+    "timeOfDay": "Morning (7am–12pm)",
+    "weather": "Sunny",
+    "surroundings": "No people around, quiet.",
+    "timestamp": "2026-05-12T14:49:05.836Z",
+    "favorite": false
   }
 ]
