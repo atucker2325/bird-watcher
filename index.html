@@ -454,6 +454,10 @@ form.addEventListener('submit', async (e) => {
   }
 });
 
+function encodeBase64(str) {
+  return btoa(unescape(encodeURIComponent(str)));
+}
+
 async function saveToGitHub(token, newEntry) {
   let entries = [];
   let sha = null;
@@ -472,7 +476,7 @@ async function saveToGitHub(token, newEntry) {
     if (getResp.ok) {
       const data = await getResp.json();
       sha = data.sha;
-      entries = JSON.parse(atob(data.content));
+      entries = JSON.parse(decodeURIComponent(escape(atob(data.content))));
     } else if (getResp.status !== 404) {
       throw new Error(`GitHub API error: ${getResp.status}`);
     }
@@ -482,7 +486,7 @@ async function saveToGitHub(token, newEntry) {
 
   entries.push(newEntry);
 
-  const content = btoa(JSON.stringify(entries, null, 2));
+  const content = encodeBase64(JSON.stringify(entries, null, 2));
   const message = `Log sighting: ${newEntry.birdType} on ${newEntry.date}`;
 
   const putResp = await fetch(
@@ -545,7 +549,7 @@ async function loadEntries() {
     let entries = [];
     if (resp.ok) {
       const data = await resp.json();
-      entries = JSON.parse(atob(data.content));
+      entries = JSON.parse(decodeURIComponent(escape(atob(data.content))));
     } else if (resp.status === 404) {
       entries = [];
     } else {
