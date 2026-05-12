@@ -1,34 +1,13 @@
 [
   {
-    "birdType": "Robin",
-    "individualName": "",
-    "behavior": "Robin was perching on the feeder even after I had taken the food inside for the night.",
-    "date": "2026-05-11",
-    "timeOfDay": "Evening (5pm–8pm)",
-    "weather": "Sunny",
-    "surroundings": "Backyard. There was a second robin nearby. Couldn't see if there were any neighbors in the yard or anything.",
-    "timestamp": "2026-05-12T01:48:38.986Z",
-    "favorite": false
-  },
-  {
-    "birdType": "Crow",
-    "individualName": "",
-    "behavior": "Inspecting my yard. Sat on the line a couple of times and looked at the feeder. Flew around my yard and ate something off the ground. ",
-    "date": "2026-05-12",
-    "timeOfDay": "Morning (7am–12pm)",
-    "weather": "Sunny",
-    "surroundings": "Backyard, calm, quiet, no people or animals around.",
-    "timestamp": "2026-05-12T14:22:15.480Z"
-  },
-  {
     "birdType": "Jay",
     "individualName": "",
-    "behavior": "Perching on the bird bath. It was looking at the feeder with interest, but the feeder was actively being guarded by a robin.",
+    "behavior": "Trying to grab food from the feeder. Actively got in a fight with the Robin. They chased each other in the trees.",
     "date": "2026-05-12",
-    "timeOfDay": "Morning (7am–12pm)",
+    "timeOfDay": "Dawn (5am–7am)",
     "weather": "Sunny",
-    "surroundings": "No people around, quiet.",
-    "timestamp": "2026-05-12T14:49:05.836Z",
+    "surroundings": "Quiet, no people. No squirrels.",
+    "timestamp": "2026-05-12T15:00:36.260Z",
     "favorite": false
   }
 ]
